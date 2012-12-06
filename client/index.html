@@ -3,10 +3,8 @@
     <head>
         <script src="http://localhost:8081/socket.io/socket.io.js"></script>
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-        <script type="text/javascript" src="jquery.nanoscroller.min.js"></script>
         <script type="text/javascript" src="date.js"></script>
         
-        <link rel="stylesheet" href="nanoscroller.css">
         <script>
           var socket = io.connect('http://localhost:8081');
           socket.on('tweet', function (data) {
@@ -16,31 +14,36 @@
                 data.retweeted_status = true;
             }
             
-            data.text = (data.text.length > 110) ? data.text.substr(0, 115) + '...' : data.text;
+            r = new RegExp('(' + 'sneeuw'.replace(/[A-z]+:(.*)/,'$1') + ')','ig');
+            message = data.text.replace(r, '<span class="regex">' + '$1' + '</span>' );
             
             dom.innerHTML += '<span class="date">' + new Date(data.created_at).toString('mm:ss') + '</span> | ';
-            dom.innerHTML += '<span class="lang">' + data.user.lang + '</span> | ';
             dom.innerHTML += '<span class="screen_name"><a href="https://twitter.com/' + data.user.screen_name + '" target="_blank">@' + data.user.screen_name + '</a></span> | ';
             dom.innerHTML += '<span class="friends_count">' + data.user.friends_count + '</span> | ';
             dom.innerHTML += '<span class="followers_count">' + data.user.followers_count + '</span> | ';
             dom.innerHTML += '<span class="if_reply">' + ((data.in_reply_to_user_id || data.in_reply_to_status_id) ? "RP" : "OT") + '</span> | ';
             dom.innerHTML += '<span class="if_retweet">' + ((data.retweeted_status) ? "RT" : "") + '</span> | ';
-            dom.innerHTML += '<span class="text">' + data.text + '</span>';
+            dom.innerHTML += '<span class="text">' + message + '</span>';
             document.getElementById('console').appendChild(dom);
-            $(".nano").nanoScroller({ scroll: 'bottom' });
+            scrollToBottom();
           });
           $(function() {
-            $(".nano").nanoScroller();
+
             //When windows resize: resize console window :)
             $(window).resize(function() {
-                $('.nano').css('width', window.innerWidth);
-                $('.nano').css('height', window.innerHeight);
+                $('#console').css('width', window.innerWidth);
+                $('#console').css('height', window.innerHeight);
+                scrollToBottom();
             });
             
             //Set console settings
-            $('.nano').css('width', window.innerWidth);
-            $('.nano').css('height', window.innerHeight);
+            $('#console').css('width', window.innerWidth);
+            $('#console').css('height', window.innerHeight);
           });
+          
+          function scrollToBottom() {
+            $('#console').animate({ scrollTop: $('#console')[0].scrollHeight}, 100);
+          }
         </script>
         <title>Sneeuwt het? Op Twitter wel!</title>
         <style>
@@ -55,6 +58,7 @@
                 list-style: none;
                 margin: 0;
                 padding: 10px;
+                display: block;
             }
             
             ul li span {
@@ -90,24 +94,26 @@
             
             ul li span.text {
                 color: #20c3c8;
+                
+            }
+            
+            ul li span.regex {
+                color: #CC3232;
             }
             
             ul li span.screen_name a {
                 color: #27be03;
-                width: 112px;
+                width: 110px;
                 text-decoration: none;
                 text-align: right;
                 display: inline-block;
             }
-            
-            .nano {
-                background: black; color: white;
+            #console {
+                background: black; color: white; height: 100px; width: 100px; overflow: scroll;
             }
         </style>
     </head>
     <body>
-        <div class="nano">
-            <div class="content"><ul id="console"></ul></div>
-        </div>
+            <ul id="console"></ul>
     </body>
 </html>
