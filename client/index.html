@@ -1,0 +1,113 @@
+<!doctype HTML>
+<html>
+    <head>
+        <script src="http://localhost:8081/socket.io/socket.io.js"></script>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+        <script type="text/javascript" src="jquery.nanoscroller.min.js"></script>
+        <script type="text/javascript" src="date.js"></script>
+        
+        <link rel="stylesheet" href="nanoscroller.css">
+        <script>
+          var socket = io.connect('http://localhost:8081');
+          socket.on('tweet', function (data) {
+            var dom = document.createElement('li');
+            if(data.text.substr(0,2).toUpperCase() == 'RT') {
+                data.text = data.text.substr(data.text.indexOf(':')+2);
+                data.retweeted_status = true;
+            }
+            
+            data.text = (data.text.length > 110) ? data.text.substr(0, 115) + '...' : data.text;
+            
+            dom.innerHTML += '<span class="date">' + new Date(data.created_at).toString('mm:ss') + '</span> | ';
+            dom.innerHTML += '<span class="lang">' + data.user.lang + '</span> | ';
+            dom.innerHTML += '<span class="screen_name"><a href="https://twitter.com/' + data.user.screen_name + '" target="_blank">@' + data.user.screen_name + '</a></span> | ';
+            dom.innerHTML += '<span class="friends_count">' + data.user.friends_count + '</span> | ';
+            dom.innerHTML += '<span class="followers_count">' + data.user.followers_count + '</span> | ';
+            dom.innerHTML += '<span class="if_reply">' + ((data.in_reply_to_user_id || data.in_reply_to_status_id) ? "RP" : "OT") + '</span> | ';
+            dom.innerHTML += '<span class="if_retweet">' + ((data.retweeted_status) ? "RT" : "") + '</span> | ';
+            dom.innerHTML += '<span class="text">' + data.text + '</span>';
+            document.getElementById('console').appendChild(dom);
+            $(".nano").nanoScroller({ scroll: 'bottom' });
+          });
+          $(function() {
+            $(".nano").nanoScroller();
+            //When windows resize: resize console window :)
+            $(window).resize(function() {
+                $('.nano').css('width', window.innerWidth);
+                $('.nano').css('height', window.innerHeight);
+            });
+            
+            //Set console settings
+            $('.nano').css('width', window.innerWidth);
+            $('.nano').css('height', window.innerHeight);
+          });
+        </script>
+        <title>Sneeuwt het? Op Twitter wel!</title>
+        <style>
+            body {
+                font-family: 'Courier New';
+                font-size: 12px;
+                margin: 0;
+                overflow: hidden;
+            }
+            
+            ul {
+                list-style: none;
+                margin: 0;
+                padding: 10px;
+            }
+            
+            ul li span {
+                text-align: left;
+                display: inline-block;
+            }
+            
+            ul li span.date {
+                color: #c7c400;
+            }
+            
+            ul li span.followers_count {
+                color: #20c3c8;
+                width: 30px;
+                text-align: right;
+            }
+            
+            ul li span.friends_count {
+                color: #20c3c8;
+                width: 30px;
+                text-align: right;
+            }
+            
+            ul li span.if_reply {
+                color: #c7c400;
+                width: 12px;
+            }
+            
+            ul li span.if_retweet {
+                color: #c7c400;
+                width: 12px;
+            }
+            
+            ul li span.text {
+                color: #20c3c8;
+            }
+            
+            ul li span.screen_name a {
+                color: #27be03;
+                width: 112px;
+                text-decoration: none;
+                text-align: right;
+                display: inline-block;
+            }
+            
+            .nano {
+                background: black; color: white;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="nano">
+            <div class="content"><ul id="console"></ul></div>
+        </div>
+    </body>
+</html>
