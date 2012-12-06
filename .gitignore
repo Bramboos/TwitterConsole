@@ -1,0 +1,9 @@
+
+client/.DS_Store
+server/.DS_Store
+
+server/credentials.js
+
+.DS_Store
+
+server/node_modules
