@@ -8,10 +8,10 @@
         <script>
           var autoScroll = true,
                inConsole = false,
-               inPartyMode = false,
-               ival = false;
-          
-          var socket = io.connect('http://localhost:8081');
+             inPartyMode = false,
+                    ival = false,
+                  socket = io.connect('http://localhost:8081');
+                  
           socket.on('tweet', function (data) {
 
             if(data.text.substr(0,2).toUpperCase() == 'RT') {
