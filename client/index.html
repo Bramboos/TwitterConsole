@@ -6,6 +6,8 @@
         <script type="text/javascript" src="http://datejs.googlecode.com/svn/tags/Alpha1.0/build/date.js"></script>
         
         <script>
+          var autoScroll = true;
+          
           var socket = io.connect('http://localhost:8081');
           socket.on('tweet', function (data) {
             var dom = document.createElement('li');
@@ -36,13 +38,22 @@
                 scrollToBottom();
             });
             
+            //When a key is pressed: check if p (pause) or s (start) and set the global var
+            $(window).keypress(function(event) {
+              if (event.which == 112)
+                autoScroll = false;
+              else if (event.which == 115)
+                autoScroll = true;
+            });
+            
             //Set console settings
             $('#console').css('width', window.innerWidth);
             $('#console').css('height', window.innerHeight);
           });
           
           function scrollToBottom() {
-            $('#console').animate({ scrollTop: $('#console')[0].scrollHeight}, 15);
+            if(autoScroll)
+                $('#console').animate({ scrollTop: $('#console')[0].scrollHeight}, 15);
           }
         </script>
         <title>Sneeuwt het? Op Twitter wel!</title>
