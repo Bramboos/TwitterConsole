@@ -8,29 +8,27 @@
         <script>
           var autoScroll = true;
           
-          setTimeout(function(){
-              var socket = io.connect('http://localhost:8081');
-              socket.on('tweet', function (data) {
+          var socket = io.connect('http://localhost:8081');
+          socket.on('tweet', function (data) {
 
-                if(data.text.substr(0,2).toUpperCase() == 'RT') {
-                    data.text = data.text.substr(data.text.indexOf(':')+2);
-                    data.retweeted_status = true;
-                }
-                
-                r = new RegExp('(' + 'sneeuw'.replace(/[A-z]+:(.*)/,'$1') + ')','ig');
-                message = data.text.replace(r, '<span class="regex">' + '$1' + '</span>' );
-                
-                var dom = '<li>';
-                dom += '<span class="date">' + new Date(data.created_at).toString('mm:ss') + '</span> | ';
-                dom += '<span class="screen_name"><a href="https://twitter.com/' + data.user.screen_name + '" target="_blank">@' + data.user.screen_name + '</a></span> | ';
-                dom += '<span class="if_reply">' + ((data.in_reply_to_user_id || data.in_reply_to_status_id) ? "RP" : "OT") + '</span> | ';
-                dom += '<span class="if_retweet">' + ((data.retweeted_status) ? "RT" : "") + '</span> | ';
-                dom += '<span class="text">' + message + '</span>';
-                dom += '</li>';
-                $(dom).appendTo('#console');
-                scrollToBottom();
-              });
-          }, 1000);
+            if(data.text.substr(0,2).toUpperCase() == 'RT') {
+                data.text = data.text.substr(data.text.indexOf(':')+2);
+                data.retweeted_status = true;
+            }
+            
+            r = new RegExp('(' + 'sneeuw'.replace(/[A-z]+:(.*)/,'$1') + ')','ig');
+            message = data.text.replace(r, '<span class="regex">' + '$1' + '</span>' );
+            
+            var dom = '<li>';
+            dom += '<span class="date">' + new Date(data.created_at).toString('mm:ss') + '</span> | ';
+            dom += '<span class="screen_name"><a href="https://twitter.com/' + data.user.screen_name + '" target="_blank">@' + data.user.screen_name + '</a></span> | ';
+            dom += '<span class="if_reply">' + ((data.in_reply_to_user_id || data.in_reply_to_status_id) ? "RP" : "OT") + '</span> | ';
+            dom += '<span class="if_retweet">' + ((data.retweeted_status) ? "RT" : "") + '</span> | ';
+            dom += '<span class="text">' + message + '</span>';
+            dom += '</li>';
+            $(dom).appendTo('#console');
+            scrollToBottom();
+          });
           
           
           $(function() {
@@ -129,14 +127,7 @@
         </style>
     </head>
     <body>
-            <ul id="console">
-                <li>
-                    <span class="date">&nbsp;now&nbsp;</span> | 
-                    <span class="screen_name"><a target="_blank" href="https://twitter.com/Legosteentje">@Legosteentje</a></span> | 
-                    <span class="if_reply">OT</span> | <span class="if_retweet"></span> | 
-                    <span class="text">Welcome! Please wait a few seconds for tweets to start appearing, Tweet @Legosteentje or @Bramboos if something breaks!</span>
-                </li>
-            </ul>
+            <ul id="console"></ul>
 		<!--[if IE]>
 			<script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
 			<script>
