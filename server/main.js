@@ -8,13 +8,13 @@ io.set('log level', 1)
 // New Twit object, insert tokens
 var twitter = new twit(credentials.Twitter)
 
-var stream = twitter.stream('statuses/filter', { track: 'sneeuw' })
+twitter.stream('statuses/filter', { track: 'sneeuw' }).on('tweet', function (tweet) {
+    io.sockets.emit('tweet', tweet)
+})
  
 io.sockets.on('connection', function (socket) {
 
-  stream.on('tweet', function (tweet) {
-    socket.emit('tweet', tweet)
-  })
+
   
 })
 
