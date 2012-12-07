@@ -11,7 +11,7 @@
           setTimeout(function(){
               var socket = io.connect('http://localhost:8081');
               socket.on('tweet', function (data) {
-                var dom = document.createElement('li');
+
                 if(data.text.substr(0,2).toUpperCase() == 'RT') {
                     data.text = data.text.substr(data.text.indexOf(':')+2);
                     data.retweeted_status = true;
@@ -20,12 +20,14 @@
                 r = new RegExp('(' + 'sneeuw'.replace(/[A-z]+:(.*)/,'$1') + ')','ig');
                 message = data.text.replace(r, '<span class="regex">' + '$1' + '</span>' );
                 
-                dom.innerHTML += '<span class="date">' + new Date(data.created_at).toString('mm:ss') + '</span> | ';
-                dom.innerHTML += '<span class="screen_name"><a href="https://twitter.com/' + data.user.screen_name + '" target="_blank">@' + data.user.screen_name + '</a></span> | ';
-                dom.innerHTML += '<span class="if_reply">' + ((data.in_reply_to_user_id || data.in_reply_to_status_id) ? "RP" : "OT") + '</span> | ';
-                dom.innerHTML += '<span class="if_retweet">' + ((data.retweeted_status) ? "RT" : "") + '</span> | ';
-                dom.innerHTML += '<span class="text">' + message + '</span>';
-                document.getElementById('console').appendChild(dom);
+                var dom = '<li>';
+                dom += '<span class="date">' + new Date(data.created_at).toString('mm:ss') + '</span> | ';
+                dom += '<span class="screen_name"><a href="https://twitter.com/' + data.user.screen_name + '" target="_blank">@' + data.user.screen_name + '</a></span> | ';
+                dom += '<span class="if_reply">' + ((data.in_reply_to_user_id || data.in_reply_to_status_id) ? "RP" : "OT") + '</span> | ';
+                dom += '<span class="if_retweet">' + ((data.retweeted_status) ? "RT" : "") + '</span> | ';
+                dom += '<span class="text">' + message + '</span>';
+                dom += '</li>';
+                $(dom).appendTo('#console');
                 scrollToBottom();
               });
           }, 1000);
